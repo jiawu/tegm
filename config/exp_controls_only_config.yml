@@ -1,0 +1,8 @@
+EXP_NAME: controls_only
+TUBE_FILE: data/exp_controls_only_tube_table.txt
+SIGMA34: 2
+SIGMA41: 3
+THRESHOLD34: 500
+THRESHOLD41: 1000
+BASE41: fitcapc
+COMPENSATION: True

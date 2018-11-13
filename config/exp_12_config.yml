@@ -1,0 +1,9 @@
+EXP_NAME: exp_12
+TUBE_FILE: data/exp_12_tube_table_final.txt
+ISOTYPE_FILE: data/MpB_Exp_4_isotype_table_final.txt
+SIGMA34: 2
+SIGMA41: 3
+THRESHOLD34: 800
+THRESHOLD41: 5000
+BASE41: pefitc
+

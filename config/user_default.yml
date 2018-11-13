@@ -1,0 +1,8 @@
+# LIST COLORS TO GATE ON AND CORRESPONDING SCALE
+COLORS:
+  PE-A: logicle
+  FITC-A: logicle
+  APC-A: logicle
+  DAPI-A: logicle
+  FSC-A: logicle
+  SSC-A: logicle
