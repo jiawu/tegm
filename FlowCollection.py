@@ -5,6 +5,7 @@ import math
 import pandas as pd
 
 import pdb
+from decorators import timeit
 
 class FlowCollection:
 
@@ -59,7 +60,8 @@ class FlowCollection:
         for metaexp in self.metaexps:
             metaexp.plot_3D(xaxis, yaxis, zaxis)
 
-    def gateXD(self, settings):
+    @timeit
+    def gateXD(self, settings, **kwargs):
         self.max_est_components = 10
 
         for metaexp in self.metaexps:

@@ -6,8 +6,11 @@ from CompensationHandler import CompensationHandler
 from CompensationReport import CompensationReport
 from FlowCollection import FlowCollection
 import utility as util
+from decorators import timeit
 import pdb
 import os
+import datetime
+import json
 
 def compensate(expt_tubes, settings, perform=True, report=True, title=""):
 
@@ -97,7 +100,8 @@ def QC(expt_tubes, settings, perform=True, report=True):
     exp_uncomp = compensation['uncompensated']
     return(exp_comp, exp_uncomp)
 
-def executeXDGating(settings, save=True, load=False):
+@timeit
+def executeXDGating(settings, save=True, load=False, **kwargs):
     if not load:
         surface_tubes, expt_tubes = util.read_surface_tube_table(settings['TUBE_FILE'])
         exp_comp, exp_uncomp = QC(expt_tubes, settings, perform = True, report = True)
@@ -109,10 +113,19 @@ def executeXDGating(settings, save=True, load=False):
         fc_list = []
         for gr in groups:
             fc_list.append(FlowCollection(exp_comp, iter_param, gr, settings))   
-
+        
+        
+        fc_log = {}
         for fc in fc_list:
-            fc.gateXD(settings) 
+            fc.gateXD(settings, log_time = fc_log) 
             #fc.plot_3D('PE-A', 'FITC-A', 'APC-A')
+        
+        # write each individual run to an output file
+        to_date = datetime.datetime.today().strftime('%Y%m%d')
+        fc_output_log_file = "FC_log_{}.txt".format(to_date)
+        with open(fc_output_log_file, 'a') as out_file:
+            out_file.write(json.dumps(fc_log))
+
     else:
         with open('pickles/controls_only/surface_tubes.pkl', 'rb') as handle:
             surface_tubes = pickle.load(handle)

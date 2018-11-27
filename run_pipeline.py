@@ -3,9 +3,6 @@ matplotlib.use("Qt5Agg")
 #matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-import cytoflow as flow
-import timeit
-
 import MetadataHelper
 import utility as util
 
@@ -17,18 +14,18 @@ import pandas as pd
 from LiveDeadReport import LiveDeadReport
 from SurfaceReport import SurfaceReport
 from PipelineHelper import executeXDGating
+import datetime
+import json
 
 if __name__ == '__main__':
-    flow.set_default_scale("logicle")
     plt.style.use('astroml')
-    DATE = '05092018'
-    config_name = 'controls_only'
+    DATE = '11142018'
+    config_name = 'controls_only_test'
     settings_path = "config/exp_{0!s}_config.yml".format(config_name)
     fs = False
 
 
     print("Running exp {0!s}...".format(config_name))
-    start = timeit.default_timer()
     print("Loading settings...")
     settings = MetadataHelper.loadSettings(settings_path)
     print("Settings loaded!")
@@ -37,8 +34,16 @@ if __name__ == '__main__':
     all_stats = MetadataHelper.loadExistingFlowGates(pickle_path)
     all_stats = False
     if all_stats is False:
-        print("No exisiting gating found, generating new gates...")
-        fc_list = executeXDGating(settings, save=True, load=False)
+        print("No existing gating found, generating new gates...")
+
+        pipeline_log = {}
+        fc_list = executeXDGating(settings, save=True, load=False, log_time = pipeline_log)
+        
+        to_date = datetime.datetime.today().strftime('%Y%m%d')
+        pipeline_output_log_file = "pipeline_log_{}.txt".format(to_date)
+        with open(pipeline_output_log_file, 'a') as out_file:
+            out_file.write(json.dumps(pipeline_log))
+        
         print("Gating completed!")
         
         all_stats = util.get_allstats_table(fc_list, settings)
@@ -154,6 +159,3 @@ if __name__ == '__main__':
     new_agg_df[header]= new_agg_df['index'].apply(pd.Series)
     new_agg_df.dropna(axis=1, how='all', inplace=True)
     new_agg_df.to_csv('{}/{}_stats.tsv'.format(tables_directory,settings['EXP_NAME']), sep='\t', index=False)
-
-    stop = timeit.default_timer()
-    print(stop-start, " to process exp ", str(config_name))

@@ -14,7 +14,6 @@ from scipy.stats import gaussian_kde
 
 import cytoflow as flow
 import cytoflow.utility as cutil
-
 def get_allstats_table(fc_list, settings):
     conditions_n = len(fc_list)
     all_stats = pd.DataFrame()
